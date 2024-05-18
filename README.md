@@ -37,7 +37,7 @@ Voice Activity Detection (VAD) aims to distinguish, at a given time, between des
   ```
 - Inference
   ```bash
-  python inference.py --input_path './data_test/[NOISE]61-70968-0000_SNR(00)_airport.WAV' --checkpoint_path './checkpoint/weights_7_acc_97.05.pth'
+  python inference.py --input_path './data_test/[NOISE]61-70968-0000_SNR(00)_airport.WAV' --checkpoint_path './checkpoint/weights_10_acc_97.09.pth'
   ```
 
 ## Dataset Preparation
