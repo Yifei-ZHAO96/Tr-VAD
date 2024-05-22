@@ -79,6 +79,10 @@ Voice Activity Detection (VAD) aims to distinguish, at a given time, between des
 - The model is trained on a mini-batch of 512, sampling rate of 16000, window step of 256, (equivalent to 512 * 256 / 16000 ~= 8.2 seconds), if you want to apply to scenarios with higher sampling rate, much longer duration of audios, you may need to adjust the batch size and learning rate and retrain the model.
 - Evaluation of the model is also based on the parameter settings as explained in the paper.
 
+## Hardware Requirements
+- GPU: Cuda memory >= 8GB
+- Storage >= 100GB (Storing training data)
+
 ## Citation
 - BibTeX
   ```
