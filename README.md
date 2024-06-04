@@ -1,5 +1,8 @@
 # Official PyTorch Implementation of "[An Efficient Transformer-Based Model for Voice Activity Detection](https://ieeexplore.ieee.org/document/9943501)"
 
+![Language](https://img.shields.io/badge/language-Python-orange.svg)&nbsp;
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md)&nbsp;
+
 <table>
   <tr>
     <td><img src="./data_test/clean_speech.png" alt="Image 1" width="100%">
