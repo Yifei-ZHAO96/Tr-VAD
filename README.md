@@ -32,6 +32,16 @@ Voice Activity Detection (VAD) aims to distinguish, at a given time, between des
   python data_gen.py <path/to/TIMIT/dataset> <path/to/noise/dataset> -sr 16000 -silence_pad 1
   ```
   - For more information, please read the instructions in `data_generation/README.md`.
+
+- Data Preprocessing
+
+  Preprocess the augmented data and obtain the AFPC feature.
+  The `<path/to/TIMIT_augmented/TRAIN` is the output of the `Data Preparation` stage.
+
+  ```bash
+  python preprocess.py '<path/to/TIMIT_augmented/TRAIN' -silence_pad 1"
+  ```
+
 - Training
   - Setup hyper-parameters in `params.py`.
   - Run script

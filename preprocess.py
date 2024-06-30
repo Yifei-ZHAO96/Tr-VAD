@@ -8,6 +8,7 @@ from glob import glob
 from functools import partial
 from multiprocessing import cpu_count
 from concurrent.futures import ProcessPoolExecutor
+import argparse
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -25,12 +26,12 @@ def find_files(directory, pattern='**/*.WAV'):
     return sorted(glob(os.path.join(directory, pattern), recursive=True))
 
 
-def preprocess_parallel(input_dirs: str, feature_dir: str, n_jobs=12, tqdm=lambda x: x, silence=1) -> list:
+def preprocess_parallel(input_dir: str, feature_dir: str, n_jobs=12, tqdm=lambda x: x, silence=1) -> list:
     """
     Prepare training/testing dataset.
 
     Args:
-        input_dirs (str): Input data directory.
+        input_dir (str): Input data directory.
         feature_dir (str): Input data save directory after transformation.
         n_jobs (int, optional): Number of jobs. Defaults to 12.
         tqdm (_type_, optional): tqdm function. Defaults to lambda x: x.
@@ -43,22 +44,20 @@ def preprocess_parallel(input_dirs: str, feature_dir: str, n_jobs=12, tqdm=lambd
     futures = []
     index = 1
 
-    for input_dir in input_dirs:
-        print(input_dir)
-        files = find_files(os.path.join(input_dir))
-        print('number of files: ', len(files))
-        for wav_path in files:
-            text_path = os.path.splitext(wav_path)[0]
-            text_parts = text_path.split('/')
-            text_path = '/'.join(text_parts) + '.PHN'
+    files = find_files(os.path.join(input_dir))
+    print('number of files: ', len(files))
+    for wav_path in files:
+        text_path = os.path.splitext(wav_path)[0]
+        text_parts = text_path.split('/')
+        text_path = '/'.join(text_parts) + '.PHN'
 
-            with open(text_path, encoding='utf-8') as f:
-                lines = f.readlines()
-                start = int(lines[1].split(' ')[0])
-                end = int(lines[-2].split(' ')[1])
-                futures.append(executor.submit(
-                    partial(_process_AFPC, feature_dir, index, wav_path, start, end, silence)))
-                index += 1
+        with open(text_path, encoding='utf-8') as f:
+            lines = f.readlines()
+            start = int(lines[1].split(' ')[0])
+            end = int(lines[-2].split(' ')[1])
+            futures.append(executor.submit(
+                partial(_process_AFPC, feature_dir, index, wav_path, start, end, silence)))
+            index += 1
 
     return [future.result() for future in tqdm(futures) if future.result() is not None]
 
@@ -135,11 +134,24 @@ def preprocess(input_folders: str, output_folder: str, output_name: str = 'list.
 
 
 if __name__ == '__main__':
-    silence = 1
-    input_folders = [
-        'F:/Code/VAD/Voice_activity_detection/TIMIT_augmented/TRAIN']
-    output_folder = 'F:/Code/VAD/Voice_activity_detection/TIMIT_augmented/train_data'
+    """
+    Use example: 
+        python preprocess.py '.../TIMIT_augmented/TRAIN' -silence_pad 1"
+    """
+    parser = argparse.ArgumentParser(
+        description="Data generation for TIMIT dataset.")
+    parser.add_argument("input_folder",
+                        help="Path to the augmented dataset, e.g., <path_to_TIMIT_augmented>")
+    parser.add_argument("-silence_pad", "--silence_padding", type=int,
+                        default=1, help="Silence padding duration in second")
 
-    preprocess(input_folders, output_folder, output_name='list.txt',
+    args = parser.parse_args()
+
+    silence = args.silence_padding
+    input_folder = args.input_folder
+    output_folder = input_folder.split('/')[:-1]
+    output_folder = '/'.join(output_folder) + '/train'
+
+    preprocess(input_folder, output_folder, output_name='list.txt',
                n_jobs=cpu_count()-1, silence=silence)
     print('Done')
