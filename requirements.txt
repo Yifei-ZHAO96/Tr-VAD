@@ -1,5 +1,5 @@
 torch~=2.2.0
-tqdm~=4.64.1
+tqdm~=4.66.3
 torchaudio~=0.13.1
 librosa~=0.10.1
 einops~=0.7.0
